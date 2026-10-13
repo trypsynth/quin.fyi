@@ -1,0 +1,18 @@
+site:
+  title: quin.fyi
+  description: Quin Gillespie's blog.
+  base_url: https://quin.fyi
+  data:
+    nav:
+      - [Home, "/"]
+      - [About, "/about"]
+posts:
+  title: quin.fyi
+  description: Quin Gillespie's blog.
+  dir: posts
+  drafts_dir: _drafts
+  rss: rss.xml
+  jsonfeed: feed.json
+ignore:
+  - README.md
+  - LICENSE*

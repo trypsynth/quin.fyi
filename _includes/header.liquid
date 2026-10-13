@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	{% comment %}The page's own title goes first, so it is what gets read in alt-tab and the
+	tab list. The home page is the site itself and needs no suffix.{% endcomment %}
+	{% if page.permalink == "" %}
+	<title>{{ site.title }}</title>
+	{% else %}
+	<title>{{ page.title }} &ndash; {{ site.title }}</title>
+	{% endif %}
+	<meta name="description" content="{{ page.description | default: site.description }}" />
+	<meta name="color-scheme" content="light dark" />
+	<link rel="stylesheet" href="/css/site.css" />
+	<link rel="alternate" type="application/rss+xml" title="{{ site.title }}" href="/rss.xml" />
+	<link rel="alternate" type="application/feed+json" title="{{ site.title }}" href="/feed.json" />
+</head>
+<body>
+	<header class="site-header">
+		<div class="wrap">
+			<a class="brand" href="/">{{ site.title }}</a>
+			<nav class="site-nav" aria-label="Main">
+				<ul>
+					{% comment %}cobalt hands the permalink back with no leading slash, and empty for
+					the home page, so the slash is put back before comparing.{% endcomment %}
+					{% capture here %}/{{ page.permalink }}{% endcapture %}
+					{% for item in site.data.nav %}
+						{% assign link = item[1] %}
+						{% if here == link %}
+							<li><a href="{{ link }}" aria-current="page">{{ item[0] }}</a></li>
+						{% else %}
+							<li><a href="{{ link }}">{{ item[0] }}</a></li>
+						{% endif %}
+					{% endfor %}
+				</ul>
+			</nav>
+		</div>
+	</header>
+	<main>

@@ -1,0 +1,19 @@
+---
+layout: default.liquid
+title: Home
+permalink: /
+---
+<h1>quin.fyi</h1>
+<p>Hi, I'm Quin, a nonbinary systems hacker across all the major platforms.</p>
+<p>I'm probably best known for writing <a href="https://paperback.dev">Paperback</a>, <a href="https://github.com/trypsynth/fedra">Fedra</a>, and <a href="https://github.com/trypsynth/backtalk">Backtalk</a>, but I love coming up with solutions to problems, so the list of things I have or currently work on is much more extensive.</p>
+<p>This is where I write about stuff, if that's at all interesting to you.</p>
+<h2>Posts</h2>
+{% if collections.posts.pages.size > 0 %}
+<ul class="post-list">
+	{% for post in collections.posts.pages %}
+	<li><a href="/{{ post.permalink }}">{{ post.title }}</a>{% if post.published_date %} <time datetime="{{ post.published_date | date: "%Y-%m-%d" }}">{{ post.published_date | date: "%B %-d, %Y" }}</time>{% else %} (draft){% endif %}</li>
+	{% endfor %}
+</ul>
+{% else %}
+<p>Nothing here yet.</p>
+{% endif %}
