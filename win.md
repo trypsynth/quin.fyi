@@ -10,7 +10,7 @@ A few small Windows tools I've made for my own use.
 
 ## Micstate
 
-Press Control+Alt+Shift+M to hear if your microphone is muted. Micstate uses your screen reader or a speech voice. Silence can also give a muted result.
+Press Control+Alt+Shift+M to hear if your microphone is muted. Micstate uses your screen reader or a speech voice. You can set the audio level used to detect mute in `config.ini`.
 
 Windows 10 or later. Download and run the file. To close Micstate, right-click its tray icon and select Exit.
 
