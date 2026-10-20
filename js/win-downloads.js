@@ -1,7 +1,6 @@
 (async () => {
   const list = document.getElementById("micstate-downloads");
-  const status = document.getElementById("micstate-download-status");
-  if (!list || !status) return;
+  if (!list) return;
 
   try {
     const response = await fetch("https://api.github.com/repos/trypsynth/micstate/releases/latest");
@@ -26,8 +25,7 @@
       return row;
     });
     list.replaceChildren(...rows);
-    status.textContent = `Micstate ${release.tag_name.replace(/^v/, "")}. Counts are for this release, as reported by GitHub.`;
   } catch {
-    status.textContent = "Download counts are unavailable right now. You can still use the download links above.";
+    for (const row of list.children) row.append(" — count unavailable");
   }
 })();

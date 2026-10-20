@@ -6,7 +6,7 @@ description: Small, free Windows utilities by Quin Gillespie.
 ---
 # Windows utilities
 
-Free tools for Windows.
+Small tools I wrote because Windows keeps making simple things annoying.
 
 ## Micstate
 
@@ -19,8 +19,6 @@ Windows 10 or later. Download and run the file. To close Micstate, right-click i
   <li><a href="https://github.com/trypsynth/micstate/releases/latest/download/micstate-arm64.exe">Download Micstate for Windows (ARM64)</a></li>
 </ul>
 
-<p id="micstate-download-status" role="status"></p>
-
-[Release notes](https://github.com/trypsynth/micstate/releases/latest) · [Source code](https://github.com/trypsynth/micstate)
+[Source code](https://github.com/trypsynth/micstate)
 
 <script src="/js/win-downloads.js" defer></script>
