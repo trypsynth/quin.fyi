@@ -15,8 +15,8 @@ Press Control+Alt+Shift+M to hear if your microphone is muted. Micstate uses you
 Windows 10 or later. Download and run the file. To close Micstate, right-click its tray icon and select Exit.
 
 <ul id="micstate-downloads" data-download-repo="micstate">
-  <li><a href="https://github.com/trypsynth/micstate/releases/latest/download/micstate-x64.exe">Download Micstate for Windows (x64)</a></li>
-  <li><a href="https://github.com/trypsynth/micstate/releases/latest/download/micstate-arm64.exe">Download Micstate for Windows (ARM64)</a></li>
+  <li><a href="https://github.com/trypsynth/micstate/releases/latest/download/micstate-x64.exe">Micstate for Windows (x64)</a></li>
+  <li><a href="https://github.com/trypsynth/micstate/releases/latest/download/micstate-arm64.exe">Micstate for Windows (ARM64)</a></li>
 </ul>
 
 [Source code](https://github.com/trypsynth/micstate)
@@ -26,10 +26,10 @@ Windows 10 or later. Download and run the file. To close Micstate, right-click i
 A small task manager for Windows. View running programs and system resource use, end processes, and control services.
 
 <ul data-download-repo="taskmon">
-  <li><a href="https://github.com/trypsynth/taskmon/releases/latest/download/taskmon-setup-x64.exe">Download Taskmon installer (x64)</a></li>
-  <li><a href="https://github.com/trypsynth/taskmon/releases/latest/download/taskmon-setup-arm64.exe">Download Taskmon installer (ARM64)</a></li>
-  <li><a href="https://github.com/trypsynth/taskmon/releases/latest/download/taskmon-x64.zip">Download Taskmon portable (x64)</a></li>
-  <li><a href="https://github.com/trypsynth/taskmon/releases/latest/download/taskmon-arm64.zip">Download Taskmon portable (ARM64)</a></li>
+  <li><a href="https://github.com/trypsynth/taskmon/releases/latest/download/taskmon-setup-x64.exe">Taskmon installer (x64)</a></li>
+  <li><a href="https://github.com/trypsynth/taskmon/releases/latest/download/taskmon-setup-arm64.exe">Taskmon installer (ARM64)</a></li>
+  <li><a href="https://github.com/trypsynth/taskmon/releases/latest/download/taskmon-x64.zip">Taskmon portable (x64)</a></li>
+  <li><a href="https://github.com/trypsynth/taskmon/releases/latest/download/taskmon-arm64.zip">Taskmon portable (ARM64)</a></li>
 </ul>
 
 [Source code](https://github.com/trypsynth/taskmon)
@@ -41,8 +41,8 @@ Hide a Windows update that causes problems, such as a driver update. You can als
 Run the file, accept the administrator prompt, and choose which updates to hide or restore.
 
 <ul data-download-repo="uphide">
-  <li><a href="https://github.com/trypsynth/uphide/releases/latest/download/uphide-x64.exe">Download Uphide for Windows (x64)</a></li>
-  <li><a href="https://github.com/trypsynth/uphide/releases/latest/download/uphide-arm64.exe">Download Uphide for Windows (ARM64)</a></li>
+  <li><a href="https://github.com/trypsynth/uphide/releases/latest/download/uphide-x64.exe">Uphide for Windows (x64)</a></li>
+  <li><a href="https://github.com/trypsynth/uphide/releases/latest/download/uphide-arm64.exe">Uphide for Windows (ARM64)</a></li>
 </ul>
 
 [Source code](https://github.com/trypsynth/uphide)
