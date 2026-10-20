@@ -5,8 +5,8 @@ site:
   data:
     nav:
       - [Home, "/"]
+      - [Windows tools, "/win"]
       - [About, "/about"]
-      - [Windows utilities, "/win"]
 posts:
   title: quin.fyi
   description: Quin Gillespie's blog.
