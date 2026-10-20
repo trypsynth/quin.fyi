@@ -6,7 +6,7 @@ description: Small, free Windows utilities by Quin Gillespie.
 ---
 # Windows utilities
 
-Small tools I wrote because Windows keeps making simple things annoying.
+A few small Windows tools I've made for my own use.
 
 ## Micstate
 
