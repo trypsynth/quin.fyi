@@ -8,6 +8,19 @@ description: Small, free Windows utilities by Quin Gillespie.
 
 A few small Windows tools I've made for my own use.
 
+## Fastwin
+
+Turn off Windows annoyances from one small menu. Disable telemetry, ads and suggested apps, OneDrive, and Bing results in Start search. Control when Windows Update installs and restarts, and fix File Explorer defaults such as hidden file extensions. Each option says whether it's on or off, and choosing it switches it.
+
+Windows 10 or later. Run the file and accept the administrator prompt. Press a number to open a category, then press an option's number to switch it. Fastwin works well with screen readers.
+
+<ul data-download-repo="fastwin">
+  <li><a href="https://github.com/trypsynth/fastwin/releases/latest/download/fastwin-x64.exe">Fastwin for Windows (x64)</a></li>
+  <li><a href="https://github.com/trypsynth/fastwin/releases/latest/download/fastwin-arm64.exe">Fastwin for Windows (ARM64)</a></li>
+</ul>
+
+[Source code](https://github.com/trypsynth/fastwin)
+
 ## Micstate
 
 Press Control+Alt+Shift+M to hear if your microphone is muted. Micstate uses your screen reader or a speech voice. You can set the audio level used to detect mute in `config.ini`.
