@@ -8,6 +8,20 @@ description: Free software by Quin Gillespie.
 
 Programs I've made, mostly for my own use. They're all free, and each one links to its source code on GitHub.
 
+## Android
+
+### Appstats
+
+See what each app on your Android phone is built with, such as Flutter, React Native, Jetpack Compose or Unity, and how sure Appstats is about it. Each app also shows its SDK versions, size, install and update dates, signing certificate, and every permission it asks for, in Android's own words. Appstats is made for TalkBack first.
+
+Android 8.0 or later. Download the APK on your phone and open it to install it. You might need to allow your browser or file manager to install apps first.
+
+<ul data-download-repo="appstats">
+  <li><a href="https://github.com/trypsynth/appstats/releases/download/v0.1.0/appstats-0.1.0.apk">Appstats for Android (APK)</a></li>
+</ul>
+
+[Source code](https://github.com/trypsynth/appstats)
+
 ## Command-line tools
 
 These run on Windows, macOS and Linux. Download the file for your system, rename it to the tool's name (with `.exe` on the end on Windows), and put it in a folder on your PATH. On macOS and Linux, make it executable first with `chmod +x`.
