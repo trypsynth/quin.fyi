@@ -62,4 +62,44 @@ Run the file, accept the administrator prompt, and choose which updates to hide 
 
 [Source code](https://github.com/trypsynth/uphide)
 
+## Command-line tools
+
+These run on Windows, macOS and Linux. Download the file for your system, rename it to the tool's name (with `.exe` on the end on Windows), and put it in a folder on your PATH. On macOS and Linux, make it executable first with `chmod +x`.
+
+### Codestats
+
+Count the code, comment and blank lines in a project, by language. Codestats follows `.gitignore` files, skips generated files such as lockfiles, and counts code inside other files by that code's own language, such as scripts in HTML pages or code blocks in Markdown. It can print its report as text, JSON, CSV, TSV, Markdown or HTML.
+
+The command is `cs`. Run it in a folder to count everything in it, or follow it with the files and folders to count.
+
+<ul data-download-repo="codestats">
+  <li><a href="https://github.com/trypsynth/codestats/releases/latest/download/cs-x86_64-pc-windows-gnu.exe">Codestats for Windows (x64)</a></li>
+  <li><a href="https://github.com/trypsynth/codestats/releases/latest/download/cs-aarch64-pc-windows-gnullvm.exe">Codestats for Windows (ARM64)</a></li>
+  <li><a href="https://github.com/trypsynth/codestats/releases/latest/download/cs-aarch64-apple-darwin">Codestats for macOS (Apple Silicon)</a></li>
+  <li><a href="https://github.com/trypsynth/codestats/releases/latest/download/cs-x86_64-apple-darwin">Codestats for macOS (Intel)</a></li>
+  <li><a href="https://github.com/trypsynth/codestats/releases/latest/download/cs-x86_64-unknown-linux-gnu">Codestats for Linux (x64)</a></li>
+  <li><a href="https://github.com/trypsynth/codestats/releases/latest/download/cs-aarch64-unknown-linux-gnu">Codestats for Linux (ARM64)</a></li>
+  <li><a href="https://github.com/trypsynth/codestats/releases/latest/download/cs-x86_64-unknown-linux-musl">Codestats for Linux (x64, static)</a></li>
+  <li><a href="https://github.com/trypsynth/codestats/releases/latest/download/cs-aarch64-unknown-linux-musl">Codestats for Linux (ARM64, static)</a></li>
+</ul>
+
+[Source code](https://github.com/trypsynth/codestats)
+
+### Gitkeep
+
+Keep a local archive of accounts on GitHub, GitLab, Forgejo and Gitea. Give Gitkeep the users or organizations to keep, and it clones every one of their repositories, then brings them all up to date each time you sync.
+
+Run `gitkeep init` to choose where the archive goes, and `gitkeep login` to add a GitHub access token. Then run `gitkeep add` followed by a user or organization name, and `gitkeep sync` whenever you want to update everything.
+
+<ul data-download-repo="gitkeep">
+  <li><a href="https://github.com/trypsynth/gitkeep/releases/latest/download/gitkeep-x86_64-pc-windows-gnu.exe">Gitkeep for Windows (x64)</a></li>
+  <li><a href="https://github.com/trypsynth/gitkeep/releases/latest/download/gitkeep-aarch64-pc-windows-gnullvm.exe">Gitkeep for Windows (ARM64)</a></li>
+  <li><a href="https://github.com/trypsynth/gitkeep/releases/latest/download/gitkeep-aarch64-apple-darwin">Gitkeep for macOS (Apple Silicon)</a></li>
+  <li><a href="https://github.com/trypsynth/gitkeep/releases/latest/download/gitkeep-x86_64-apple-darwin">Gitkeep for macOS (Intel)</a></li>
+  <li><a href="https://github.com/trypsynth/gitkeep/releases/latest/download/gitkeep-x86_64-unknown-linux-musl">Gitkeep for Linux (x64)</a></li>
+  <li><a href="https://github.com/trypsynth/gitkeep/releases/latest/download/gitkeep-aarch64-unknown-linux-musl">Gitkeep for Linux (ARM64)</a></li>
+</ul>
+
+[Source code](https://github.com/trypsynth/gitkeep)
+
 <script src="/js/downloads.js" defer></script>
