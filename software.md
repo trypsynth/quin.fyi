@@ -48,6 +48,23 @@ Run `gitkeep init` to choose where the archive goes, and `gitkeep login` to add 
 
 [Source code](https://github.com/trypsynth/gitkeep)
 
+### Txt2img
+
+Draw text onto an image from the command line, without AI. You can set the image size and colors, place and align the text, use your own BDF or PCF bitmap font, add a drop shadow, or have the image sized to fit the text.
+
+Run `txt2img` followed by the text in quotes. It saves `image.png` unless you give another name with `-o`, and `txt2img --help` lists every option.
+
+<ul data-download-repo="txt2img">
+  <li><a href="https://github.com/trypsynth/txt2img/releases/latest/download/txt2img-x86_64-windows-gnu.exe">Txt2img for Windows (x64)</a></li>
+  <li><a href="https://github.com/trypsynth/txt2img/releases/latest/download/txt2img-aarch64-windows-gnu.exe">Txt2img for Windows (ARM64)</a></li>
+  <li><a href="https://github.com/trypsynth/txt2img/releases/latest/download/txt2img-aarch64-macos">Txt2img for macOS (Apple Silicon)</a></li>
+  <li><a href="https://github.com/trypsynth/txt2img/releases/latest/download/txt2img-x86_64-macos">Txt2img for macOS (Intel)</a></li>
+  <li><a href="https://github.com/trypsynth/txt2img/releases/latest/download/txt2img-x86_64-linux-musl">Txt2img for Linux (x64)</a></li>
+  <li><a href="https://github.com/trypsynth/txt2img/releases/latest/download/txt2img-aarch64-linux-musl">Txt2img for Linux (ARM64)</a></li>
+</ul>
+
+[Source code](https://github.com/trypsynth/txt2img)
+
 ## Windows utilities
 
 ### Fastwin
