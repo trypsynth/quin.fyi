@@ -5,7 +5,7 @@ site:
   data:
     nav:
       - [Home, "/"]
-      - [Windows tools, "/win"]
+      - [Software, "/software"]
       - [About, "/about"]
 posts:
   title: quin.fyi

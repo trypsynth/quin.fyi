@@ -1,14 +1,16 @@
 ---
 layout: default.liquid
-title: Windows utilities
-permalink: /win
-description: Small, free Windows utilities by Quin Gillespie.
+title: Software
+permalink: /software
+description: Free software by Quin Gillespie.
 ---
-# Windows utilities
+# Software
 
-A few small Windows tools I've made for my own use.
+Programs I've made, mostly for my own use. They're all free, and each one links to its source code on GitHub.
 
-## Fastwin
+## Windows utilities
+
+### Fastwin
 
 Turn off Windows annoyances from one small menu. Disable telemetry, ads and suggested apps, OneDrive, and Bing results in Start search. Control when Windows Update installs and restarts, and fix File Explorer defaults such as hidden file extensions. Each option says whether it's on or off, and choosing it switches it.
 
@@ -21,7 +23,7 @@ Windows 10 or later. Run the file and accept the administrator prompt. Press a n
 
 [Source code](https://github.com/trypsynth/fastwin)
 
-## Micstate
+### Micstate
 
 Press Control+Alt+Shift+M to hear if your microphone is muted. Micstate uses your screen reader or a speech voice. You can set the audio level used to detect mute in `config.ini`.
 
@@ -34,7 +36,7 @@ Windows 10 or later. Download and run the file. To close Micstate, right-click i
 
 [Source code](https://github.com/trypsynth/micstate)
 
-## Taskmon
+### Taskmon
 
 A small task manager for Windows. View running programs and system resource use, end processes, and control services.
 
@@ -47,7 +49,7 @@ A small task manager for Windows. View running programs and system resource use,
 
 [Source code](https://github.com/trypsynth/taskmon)
 
-## Uphide
+### Uphide
 
 Hide a Windows update that causes problems, such as a driver update. You can also restore hidden updates so Windows offers them again.
 
@@ -60,4 +62,4 @@ Run the file, accept the administrator prompt, and choose which updates to hide 
 
 [Source code](https://github.com/trypsynth/uphide)
 
-<script src="/js/win-downloads.js" defer></script>
+<script src="/js/downloads.js" defer></script>
