@@ -48,6 +48,23 @@ Run `gitkeep init` to choose where the archive goes, and `gitkeep login` to add 
 
 [Source code](https://github.com/trypsynth/gitkeep)
 
+### Scriptview
+
+Read the source code of compiled AppleScript files (`.scpt`) on Windows, macOS or Linux, without needing a Mac. Scriptview prints the same thing that Apple's `osadecompile` prints. It also reads run-only scripts, JavaScript for Automation scripts, and classic Mac OS scripts back to 1993.
+
+Run `scriptview` followed by the script's file name. You can also give it a script bundle (`.scptd`) or an applet (`.app`). Scriptview comes in an archive: extract it, and the program inside is already called `scriptview`.
+
+<ul data-download-repo="scriptview">
+  <li><a href="https://github.com/trypsynth/scriptview/releases/download/v0.4.0/scriptview-v0.4.0-windows-amd64.zip">Scriptview for Windows (x64)</a></li>
+  <li><a href="https://github.com/trypsynth/scriptview/releases/download/v0.4.0/scriptview-v0.4.0-windows-arm64.zip">Scriptview for Windows (ARM64)</a></li>
+  <li><a href="https://github.com/trypsynth/scriptview/releases/download/v0.4.0/scriptview-v0.4.0-darwin-arm64.tar.gz">Scriptview for macOS (Apple Silicon)</a></li>
+  <li><a href="https://github.com/trypsynth/scriptview/releases/download/v0.4.0/scriptview-v0.4.0-darwin-amd64.tar.gz">Scriptview for macOS (Intel)</a></li>
+  <li><a href="https://github.com/trypsynth/scriptview/releases/download/v0.4.0/scriptview-v0.4.0-linux-amd64.tar.gz">Scriptview for Linux (x64)</a></li>
+  <li><a href="https://github.com/trypsynth/scriptview/releases/download/v0.4.0/scriptview-v0.4.0-linux-arm64.tar.gz">Scriptview for Linux (ARM64)</a></li>
+</ul>
+
+[Source code](https://github.com/trypsynth/scriptview)
+
 ### Txt2img
 
 Draw text onto an image from the command line, without AI. You can set the image size and colors, place and align the text, use your own BDF or PCF bitmap font, add a drop shadow, or have the image sized to fit the text.
