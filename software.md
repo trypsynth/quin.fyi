@@ -48,6 +48,23 @@ Run `gitkeep init` to choose where the archive goes, and `gitkeep login` to add 
 
 [Source code](https://github.com/trypsynth/gitkeep)
 
+### Podfeed
+
+Get the RSS feed URL of a podcast from its Apple Podcasts link, so you can follow it in any podcast app.
+
+Run `podfeed` followed by one or more Apple Podcasts links, and it prints the feed URL for each one.
+
+<ul data-download-repo="podfeed">
+  <li><a href="https://github.com/trypsynth/podfeed/releases/latest/download/podfeed-x86_64-windows-gnu.exe">Podfeed for Windows (x64)</a></li>
+  <li><a href="https://github.com/trypsynth/podfeed/releases/latest/download/podfeed-aarch64-windows-gnu.exe">Podfeed for Windows (ARM64)</a></li>
+  <li><a href="https://github.com/trypsynth/podfeed/releases/latest/download/podfeed-aarch64-macos">Podfeed for macOS (Apple Silicon)</a></li>
+  <li><a href="https://github.com/trypsynth/podfeed/releases/latest/download/podfeed-x86_64-macos">Podfeed for macOS (Intel)</a></li>
+  <li><a href="https://github.com/trypsynth/podfeed/releases/latest/download/podfeed-x86_64-linux-musl">Podfeed for Linux (x64)</a></li>
+  <li><a href="https://github.com/trypsynth/podfeed/releases/latest/download/podfeed-aarch64-linux-musl">Podfeed for Linux (ARM64)</a></li>
+</ul>
+
+[Source code](https://github.com/trypsynth/podfeed)
+
 ### Scriptview
 
 Read the source code of compiled AppleScript files (`.scpt`) on Windows, macOS or Linux, without needing a Mac. Scriptview prints the same thing that Apple's `osadecompile` prints. It also reads run-only scripts, JavaScript for Automation scripts, and classic Mac OS scripts back to 1993.
