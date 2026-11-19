@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	
+	
+	<title>tdsr through NVDA, over Tailscale &ndash; quin.fyi</title>
+	
+	<meta name="description" content="Run tdsr on a remote machine and hear it through NVDA on Windows, with TDSR Server, Tailscale, and a PuTTY app module that keeps NVDA quiet." />
+	<meta name="color-scheme" content="light dark" />
+	<link rel="stylesheet" href="/css/site.css" />
+	<link rel="alternate" type="application/rss+xml" title="quin.fyi" href="/rss.xml" />
+	<link rel="alternate" type="application/feed+json" title="quin.fyi" href="/feed.json" />
+</head>
+<body>
+	<header class="site-header">
+		<div class="wrap">
+			<a class="brand" href="/">quin.fyi</a>
+			<nav class="site-nav" aria-label="Main">
+				<ul>
+					
+					
+					
+						
+						
+							<li><a href="/">Home</a></li>
+						
+					
+						
+						
+							<li><a href="/software">Software</a></li>
+						
+					
+						
+						
+							<li><a href="/about">About</a></li>
+						
+					
+				</ul>
+			</nav>
+		</div>
+	</header>
+	<main>
+
+<article>
+	<header>
+		<h1>tdsr through NVDA, over Tailscale</h1>
+		
+		<p class="meta"><time datetime="2026-11-18">November 18, 2026</time></p>
+		
+	</header>
+	<p>For years, my terminal workflow has been the same: I SSH in from PuTTY on Windows, and <a href="https://github.com/tspivey/tdsr">tdsr</a> reads the terminal on the remote machine. These days its speech comes back to my PC over <a href="https://tailscale.com">Tailscale</a>, where <a href="https://github.com/trypsynth/tdsr-server">TDSR Server</a> speaks it through NVDA.</p>
+<p>If you want the same setup, or just to Quinify your terminal a little, here's how.</p>
+<h2>How it works</h2>
+<p>tdsr can send its speech to any command you give it with <code>-s</code>. We'll give it <code>socat</code>, which forwards the speech over TCP to TDSR Server on your Windows PC.</p>
+<p>Tailscale connects the two machines, so this works from anywhere, with no port forwarding. And on the Windows side, a small NVDA app module stops NVDA reading PuTTY itself, so you don't hear everything twice.</p>
+<h2>1. Run TDSR Server</h2>
+<p>On your Windows PC, download <code>tdsr-server-x64.exe</code> or <code>tdsr-server-arm64.exe</code> from the <a href="https://github.com/trypsynth/tdsr-server/releases/latest">latest release</a> and run it. It sits in the system tray and listens on port 64111. To use another port, pass it as an argument. Allow it through Windows Firewall when asked.</p>
+<p>The protocol is one command per line: <code>s</code> followed by text speaks the text, and <code>x</code> stops speech. That's all it can do, but anything that can reach the port can make it talk, so don't expose it beyond your own network and tailnet.</p>
+<h2>2. Connect the machines with Tailscale</h2>
+<p>Put your PC and the remote machine on the same tailnet. The examples below use <code>my-pc</code> as your PC's name; run <code>tailscale status</code> to find yours. Then check that the remote machine can reach TDSR Server:</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#96b5b4;">printf </span><span style="color:#c0c5ce;">&#39;</span><span style="color:#a3be8c;">sTest\n</span><span style="color:#c0c5ce;">&#39; | </span><span style="color:#8fa1b3;">socat</span><span style="color:#c0c5ce;"> - TCP4:my-pc:64111
+</span></code></pre>
+<p>If your screen reader says "Test", you're connected.</p>
+<h2>3. Set up tdsr</h2>
+<p>On the remote machine, install tdsr with <a href="https://docs.astral.sh/uv/">uv</a>:</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#8fa1b3;">uv</span><span style="color:#c0c5ce;"> tool install git+https://github.com/tspivey/tdsr.git
+</span></code></pre>
+<p>Next, tdsr needs a command to send its speech to. Save this as <code>~/.local/bin/tdsr-speech</code> and make it executable:</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#65737e;">#!/bin/sh
+</span><span style="color:#96b5b4;">exec</span><span style="color:#c0c5ce;"> socat - TCP4:my-pc:64111,nodelay
+</span></code></pre>
+<p>Finally, add this to your shell config, to save typing:</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#96b5b4;">alias </span><span style="color:#8fa1b3;">tdsr</span><span style="color:#c0c5ce;">=&#39;</span><span style="color:#a3be8c;">tdsr -s tdsr-speech</span><span style="color:#c0c5ce;">&#39;
+</span></code></pre>
+<p>Run <code>tdsr</code>, and you should hear it start talking.</p>
+<h2>4. Keep NVDA quiet in PuTTY</h2>
+<p>At this point NVDA and tdsr both read PuTTY, which gets old fast. NVDA's built-in PuTTY support reads new output as it arrives and reports the caret as you type and move. This app module replaces it. PuTTY becomes plain editable text: NVDA reads no new output, the editing and navigation keys report nothing, and the review cursor still works. Copying from the review cursor also drops the spaces PuTTY pads each line with.</p>
+<p>To install it, turn on "Enable loading custom code from Developer Scratchpad directory" in NVDA's Advanced settings, save the module as <code>%APPDATA%\nvda\scratchpad\appModules\putty.py</code>, and restart NVDA. It only affects PuTTY, so NVDA behaves as usual everywhere else.</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#b48ead;">import </span><span style="color:#c0c5ce;">unicodedata
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#b48ead;">import </span><span style="color:#c0c5ce;">appModuleHandler
+</span><span style="color:#b48ead;">import </span><span style="color:#c0c5ce;">oleacc
+</span><span style="color:#b48ead;">import </span><span style="color:#c0c5ce;">textInfos
+</span><span style="color:#b48ead;">import </span><span style="color:#c0c5ce;">textUtils
+</span><span style="color:#b48ead;">from </span><span style="color:#c0c5ce;">displayModel </span><span style="color:#b48ead;">import </span><span style="color:#c0c5ce;">EditableTextDisplayModelTextInfo
+</span><span style="color:#b48ead;">from </span><span style="color:#c0c5ce;">NVDAObjects.IAccessible </span><span style="color:#b48ead;">import </span><span style="color:#c0c5ce;">IAccessible
+</span><span style="color:#b48ead;">from </span><span style="color:#c0c5ce;">NVDAObjects.window </span><span style="color:#b48ead;">import </span><span style="color:#c0c5ce;">DisplayModelEditableText
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#b48ead;">def </span><span style="color:#8fa1b3;">isWordChar</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">char</span><span style="color:#c0c5ce;">):
+</span><span style="color:#c0c5ce;">	</span><span style="color:#b48ead;">return </span><span style="color:#c0c5ce;">unicodedata.</span><span style="color:#8fa1b3;">category</span><span style="color:#c0c5ce;">(char)[</span><span style="color:#d08770;">0</span><span style="color:#c0c5ce;">] in &quot;</span><span style="color:#a3be8c;">LMNP</span><span style="color:#c0c5ce;">&quot;
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#b48ead;">def </span><span style="color:#8fa1b3;">findStartOfWord</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">text</span><span style="color:#c0c5ce;">, </span><span style="color:#bf616a;">offset</span><span style="color:#c0c5ce;">):
+</span><span style="color:#c0c5ce;">	</span><span style="color:#b48ead;">if </span><span style="color:#c0c5ce;">offset &gt;= </span><span style="color:#96b5b4;">len</span><span style="color:#c0c5ce;">(text):
+</span><span style="color:#c0c5ce;">		</span><span style="color:#b48ead;">return </span><span style="color:#c0c5ce;">offset
+</span><span style="color:#c0c5ce;">	</span><span style="color:#b48ead;">while </span><span style="color:#c0c5ce;">offset &gt; </span><span style="color:#d08770;">0 </span><span style="color:#c0c5ce;">and text[offset].</span><span style="color:#8fa1b3;">isspace</span><span style="color:#c0c5ce;">():
+</span><span style="color:#c0c5ce;">		offset -= </span><span style="color:#d08770;">1
+</span><span style="color:#c0c5ce;">	</span><span style="color:#b48ead;">if </span><span style="color:#8fa1b3;">isWordChar</span><span style="color:#c0c5ce;">(text[offset]):
+</span><span style="color:#c0c5ce;">		</span><span style="color:#b48ead;">while </span><span style="color:#c0c5ce;">offset &gt; </span><span style="color:#d08770;">0 </span><span style="color:#c0c5ce;">and </span><span style="color:#8fa1b3;">isWordChar</span><span style="color:#c0c5ce;">(text[offset - </span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">]):
+</span><span style="color:#c0c5ce;">			offset -= </span><span style="color:#d08770;">1
+</span><span style="color:#c0c5ce;">	</span><span style="color:#b48ead;">return </span><span style="color:#c0c5ce;">offset
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#b48ead;">def </span><span style="color:#8fa1b3;">findEndOfWord</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">text</span><span style="color:#c0c5ce;">, </span><span style="color:#bf616a;">offset</span><span style="color:#c0c5ce;">):
+</span><span style="color:#c0c5ce;">	</span><span style="color:#b48ead;">if </span><span style="color:#c0c5ce;">offset &gt;= </span><span style="color:#96b5b4;">len</span><span style="color:#c0c5ce;">(text):
+</span><span style="color:#c0c5ce;">		</span><span style="color:#b48ead;">return </span><span style="color:#c0c5ce;">offset + </span><span style="color:#d08770;">1
+</span><span style="color:#c0c5ce;">	</span><span style="color:#b48ead;">if </span><span style="color:#8fa1b3;">isWordChar</span><span style="color:#c0c5ce;">(text[offset]):
+</span><span style="color:#c0c5ce;">		</span><span style="color:#b48ead;">while </span><span style="color:#c0c5ce;">offset &lt; </span><span style="color:#96b5b4;">len</span><span style="color:#c0c5ce;">(text) and </span><span style="color:#8fa1b3;">isWordChar</span><span style="color:#c0c5ce;">(text[offset]):
+</span><span style="color:#c0c5ce;">			offset += </span><span style="color:#d08770;">1
+</span><span style="color:#c0c5ce;">	</span><span style="color:#b48ead;">elif </span><span style="color:#c0c5ce;">unicodedata.</span><span style="color:#8fa1b3;">category</span><span style="color:#c0c5ce;">(text[offset])[</span><span style="color:#d08770;">0</span><span style="color:#c0c5ce;">] != &quot;</span><span style="color:#a3be8c;">Z</span><span style="color:#c0c5ce;">&quot;:
+</span><span style="color:#c0c5ce;">		offset += </span><span style="color:#d08770;">1
+</span><span style="color:#c0c5ce;">	</span><span style="color:#b48ead;">while </span><span style="color:#c0c5ce;">offset &lt; </span><span style="color:#96b5b4;">len</span><span style="color:#c0c5ce;">(text) and text[offset].</span><span style="color:#8fa1b3;">isspace</span><span style="color:#c0c5ce;">():
+</span><span style="color:#c0c5ce;">		offset += </span><span style="color:#d08770;">1
+</span><span style="color:#c0c5ce;">	</span><span style="color:#b48ead;">return </span><span style="color:#c0c5ce;">offset
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">TerminalTextInfo</span><span style="color:#eff1f5;">(</span><span style="color:#a3be8c;">EditableTextDisplayModelTextInfo</span><span style="color:#eff1f5;">):
+</span><span style="color:#c0c5ce;">	</span><span style="color:#b48ead;">def </span><span style="color:#8fa1b3;">_get_clipboardText</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">self</span><span style="color:#c0c5ce;">):
+</span><span style="color:#c0c5ce;">		</span><span style="color:#65737e;"># Drop the spaces that pad each line out to the window width.
+</span><span style="color:#c0c5ce;">		</span><span style="color:#b48ead;">return </span><span style="color:#c0c5ce;">&quot;</span><span style="color:#96b5b4;">\r\n</span><span style="color:#c0c5ce;">&quot;.</span><span style="color:#8fa1b3;">join</span><span style="color:#c0c5ce;">(line.</span><span style="color:#8fa1b3;">strip</span><span style="color:#c0c5ce;">(&quot;</span><span style="color:#96b5b4;">\r\n</span><span style="color:#c0c5ce;">&quot;).</span><span style="color:#8fa1b3;">rstrip</span><span style="color:#c0c5ce;">() </span><span style="color:#b48ead;">for </span><span style="color:#c0c5ce;">line </span><span style="color:#b48ead;">in </span><span style="color:#bf616a;">self</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">getTextInChunks</span><span style="color:#c0c5ce;">(textInfos.</span><span style="color:#bf616a;">UNIT_LINE</span><span style="color:#c0c5ce;">))
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#c0c5ce;">	</span><span style="color:#b48ead;">def </span><span style="color:#8fa1b3;">_getWordOffsets</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">self</span><span style="color:#c0c5ce;">, </span><span style="color:#bf616a;">offset</span><span style="color:#c0c5ce;">):
+</span><span style="color:#c0c5ce;">		</span><span style="color:#b48ead;">if </span><span style="color:#bf616a;">self</span><span style="color:#c0c5ce;">.encoding not in (textUtils.</span><span style="color:#bf616a;">WCHAR_ENCODING</span><span style="color:#c0c5ce;">, </span><span style="color:#d08770;">None</span><span style="color:#c0c5ce;">, &quot;</span><span style="color:#a3be8c;">utf_32_le</span><span style="color:#c0c5ce;">&quot;, textUtils.</span><span style="color:#bf616a;">USER_ANSI_CODE_PAGE</span><span style="color:#c0c5ce;">):
+</span><span style="color:#c0c5ce;">			</span><span style="color:#b48ead;">raise </span><span style="color:#c0c5ce;">NotImplementedError
+</span><span style="color:#c0c5ce;">		lineStart, lineEnd = </span><span style="color:#bf616a;">self</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">_getLineOffsets</span><span style="color:#c0c5ce;">(offset)
+</span><span style="color:#c0c5ce;">		</span><span style="color:#65737e;"># Break words on NUL and non-breaking space too.
+</span><span style="color:#c0c5ce;">		lineText = </span><span style="color:#bf616a;">self</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">_getTextRange</span><span style="color:#c0c5ce;">(lineStart, lineEnd).</span><span style="color:#8fa1b3;">translate</span><span style="color:#c0c5ce;">({</span><span style="color:#d08770;">0</span><span style="color:#c0c5ce;">: &quot; &quot;, </span><span style="color:#d08770;">0xA0</span><span style="color:#c0c5ce;">: &quot; &quot;})
+</span><span style="color:#c0c5ce;">		relOffset = offset - lineStart
+</span><span style="color:#c0c5ce;">		</span><span style="color:#b48ead;">if </span><span style="color:#bf616a;">self</span><span style="color:#c0c5ce;">.useUniscribe:
+</span><span style="color:#c0c5ce;">			offsets = </span><span style="color:#bf616a;">self</span><span style="color:#c0c5ce;">.</span><span style="color:#8fa1b3;">_calculateUniscribeOffsets</span><span style="color:#c0c5ce;">(lineText, textInfos.</span><span style="color:#bf616a;">UNIT_WORD</span><span style="color:#c0c5ce;">, relOffset)
+</span><span style="color:#c0c5ce;">			</span><span style="color:#b48ead;">if </span><span style="color:#c0c5ce;">offsets is not </span><span style="color:#d08770;">None</span><span style="color:#c0c5ce;">:
+</span><span style="color:#c0c5ce;">				</span><span style="color:#b48ead;">return </span><span style="color:#c0c5ce;">(offsets[</span><span style="color:#d08770;">0</span><span style="color:#c0c5ce;">] + lineStart, offsets[</span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">] + lineStart)
+</span><span style="color:#c0c5ce;">		</span><span style="color:#b48ead;">if </span><span style="color:#bf616a;">self</span><span style="color:#c0c5ce;">.encoding == textUtils.</span><span style="color:#bf616a;">WCHAR_ENCODING</span><span style="color:#c0c5ce;">:
+</span><span style="color:#c0c5ce;">			converter = textUtils.</span><span style="color:#8fa1b3;">WideStringOffsetConverter</span><span style="color:#c0c5ce;">(lineText)
+</span><span style="color:#c0c5ce;">			strOffset = converter.</span><span style="color:#8fa1b3;">encodedToStrOffsets</span><span style="color:#c0c5ce;">(relOffset, relOffset)[</span><span style="color:#d08770;">0</span><span style="color:#c0c5ce;">]
+</span><span style="color:#c0c5ce;">			start, end = converter.</span><span style="color:#8fa1b3;">strToEncodedOffsets</span><span style="color:#c0c5ce;">(</span><span style="color:#8fa1b3;">findStartOfWord</span><span style="color:#c0c5ce;">(lineText, strOffset), </span><span style="color:#8fa1b3;">findEndOfWord</span><span style="color:#c0c5ce;">(lineText, strOffset))
+</span><span style="color:#c0c5ce;">		</span><span style="color:#b48ead;">else</span><span style="color:#c0c5ce;">:
+</span><span style="color:#c0c5ce;">			start, end = </span><span style="color:#8fa1b3;">findStartOfWord</span><span style="color:#c0c5ce;">(lineText, relOffset), </span><span style="color:#8fa1b3;">findEndOfWord</span><span style="color:#c0c5ce;">(lineText, relOffset)
+</span><span style="color:#c0c5ce;">		</span><span style="color:#b48ead;">return </span><span style="color:#c0c5ce;">(start + lineStart, end + lineStart)
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">QuietTerminal</span><span style="color:#eff1f5;">(</span><span style="color:#a3be8c;">DisplayModelEditableText</span><span style="color:#eff1f5;">):
+</span><span style="color:#c0c5ce;">	TextInfo = TerminalTextInfo
+</span><span style="color:#c0c5ce;">	</span><span style="color:#65737e;"># Unbound, so NVDA doesn&#39;t read the line or character after these keys.
+</span><span style="color:#c0c5ce;">	__gestures = dict.</span><span style="color:#8fa1b3;">fromkeys</span><span style="color:#c0c5ce;">(
+</span><span style="color:#c0c5ce;">		(
+</span><span style="color:#c0c5ce;">			&quot;</span><span style="color:#a3be8c;">kb:enter</span><span style="color:#c0c5ce;">&quot;,
+</span><span style="color:#c0c5ce;">			&quot;</span><span style="color:#a3be8c;">kb:upArrow</span><span style="color:#c0c5ce;">&quot;,
+</span><span style="color:#c0c5ce;">			&quot;</span><span style="color:#a3be8c;">kb:downArrow</span><span style="color:#c0c5ce;">&quot;,
+</span><span style="color:#c0c5ce;">			&quot;</span><span style="color:#a3be8c;">kb:leftArrow</span><span style="color:#c0c5ce;">&quot;,
+</span><span style="color:#c0c5ce;">			&quot;</span><span style="color:#a3be8c;">kb:rightArrow</span><span style="color:#c0c5ce;">&quot;,
+</span><span style="color:#c0c5ce;">			&quot;</span><span style="color:#a3be8c;">kb:pageUp</span><span style="color:#c0c5ce;">&quot;,
+</span><span style="color:#c0c5ce;">			&quot;</span><span style="color:#a3be8c;">kb:pageDown</span><span style="color:#c0c5ce;">&quot;,
+</span><span style="color:#c0c5ce;">			&quot;</span><span style="color:#a3be8c;">kb:control+leftArrow</span><span style="color:#c0c5ce;">&quot;,
+</span><span style="color:#c0c5ce;">			&quot;</span><span style="color:#a3be8c;">kb:control+rightArrow</span><span style="color:#c0c5ce;">&quot;,
+</span><span style="color:#c0c5ce;">			&quot;</span><span style="color:#a3be8c;">kb:home</span><span style="color:#c0c5ce;">&quot;,
+</span><span style="color:#c0c5ce;">			&quot;</span><span style="color:#a3be8c;">kb:end</span><span style="color:#c0c5ce;">&quot;,
+</span><span style="color:#c0c5ce;">			&quot;</span><span style="color:#a3be8c;">kb:delete</span><span style="color:#c0c5ce;">&quot;,
+</span><span style="color:#c0c5ce;">			&quot;</span><span style="color:#a3be8c;">kb:backspace</span><span style="color:#c0c5ce;">&quot;,
+</span><span style="color:#c0c5ce;">		)
+</span><span style="color:#c0c5ce;">	)
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#c0c5ce;">
+</span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">AppModule</span><span style="color:#eff1f5;">(</span><span style="color:#a3be8c;">appModuleHandler.AppModule</span><span style="color:#eff1f5;">):
+</span><span style="color:#c0c5ce;">	</span><span style="color:#b48ead;">def </span><span style="color:#8fa1b3;">chooseNVDAObjectOverlayClasses</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">self</span><span style="color:#c0c5ce;">, </span><span style="color:#bf616a;">obj</span><span style="color:#c0c5ce;">, </span><span style="color:#bf616a;">clsList</span><span style="color:#c0c5ce;">):
+</span><span style="color:#c0c5ce;">		</span><span style="color:#b48ead;">if </span><span style="color:#c0c5ce;">obj.windowClassName == &quot;</span><span style="color:#a3be8c;">PuTTY</span><span style="color:#c0c5ce;">&quot; and </span><span style="color:#96b5b4;">isinstance</span><span style="color:#c0c5ce;">(obj, IAccessible) and obj.IAccessibleRole == oleacc.</span><span style="color:#bf616a;">ROLE_SYSTEM_CLIENT</span><span style="color:#c0c5ce;">:
+</span><span style="color:#c0c5ce;">			</span><span style="color:#b48ead;">if </span><span style="color:#c0c5ce;">DisplayModelEditableText in clsList:
+</span><span style="color:#c0c5ce;">				clsList.</span><span style="color:#8fa1b3;">remove</span><span style="color:#c0c5ce;">(DisplayModelEditableText)
+</span><span style="color:#c0c5ce;">			clsList.</span><span style="color:#8fa1b3;">insert</span><span style="color:#c0c5ce;">(</span><span style="color:#d08770;">0</span><span style="color:#c0c5ce;">, QuietTerminal)
+</span></code></pre>
+
+</article>
+	</main>
+	<footer class="site-footer">
+		<div class="wrap">
+			<ul>
+				<li><a href="/rss.xml">RSS feed</a></li>
+				<li><a href="https://github.com/trypsynth/quin.fyi">Source code</a></li>
+			</ul>
+			<p>Posts are licensed CC BY 4.0. The site's code is MIT licensed.</p>
+		</div>
+	</footer>
+</body>
+</html>
+
