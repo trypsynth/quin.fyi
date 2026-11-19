@@ -106,6 +106,19 @@ A small task manager for Windows. View running programs and system resource use,
 
 [Source code](https://github.com/trypsynth/taskmon)
 
+### TDSR Server
+
+Hear [tdsr](https://github.com/tspivey/tdsr), the console screen reader for macOS and Linux, through your Windows screen reader. Run tdsr on another computer, such as a Linux server you connect to over SSH, and TDSR Server speaks it through NVDA, JAWS or another screen reader, or a Windows voice if no screen reader is running.
+
+Run the file on your Windows PC. It listens on port 64111, or on a port you give it on the command line. Then point tdsr at it, as the [readme](https://github.com/trypsynth/tdsr-server#usage) explains. To close TDSR Server, right-click its tray icon and select Quit.
+
+<ul data-download-repo="tdsr-server">
+  <li><a href="https://github.com/trypsynth/tdsr-server/releases/latest/download/tdsr-server-x64.exe">TDSR Server for Windows (x64)</a></li>
+  <li><a href="https://github.com/trypsynth/tdsr-server/releases/latest/download/tdsr-server-arm64.exe">TDSR Server for Windows (ARM64)</a></li>
+</ul>
+
+[Source code](https://github.com/trypsynth/tdsr-server)
+
 ### Uphide
 
 Hide a Windows update that causes problems, such as a driver update. You can also restore hidden updates so Windows offers them again.
