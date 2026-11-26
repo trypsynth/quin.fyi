@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	
+	
+	<title>How one manifest line broke ä and ö &ndash; quin.fyi</title>
+	
+	<meta name="description" content="A Finnish SAPI 5 voice garbled every ä and ö in Paperback's read aloud, and the cause turned out to be a single line in Paperback's app manifest." />
+	<meta name="color-scheme" content="light dark" />
+	<link rel="stylesheet" href="/css/site.css" />
+	<link rel="alternate" type="application/rss+xml" title="quin.fyi" href="/rss.xml" />
+	<link rel="alternate" type="application/feed+json" title="quin.fyi" href="/feed.json" />
+</head>
+<body>
+	<header class="site-header">
+		<div class="wrap">
+			<a class="brand" href="/">quin.fyi</a>
+			<nav class="site-nav" aria-label="Main">
+				<ul>
+					
+					
+					
+						
+						
+							<li><a href="/">Home</a></li>
+						
+					
+						
+						
+							<li><a href="/software">Software</a></li>
+						
+					
+						
+						
+							<li><a href="/about">About</a></li>
+						
+					
+				</ul>
+			</nav>
+		</div>
+	</header>
+	<main>
+
+<article>
+	<header>
+		<h1>How one manifest line broke ä and ö</h1>
+		
+		<p class="meta"><time datetime="2026-11-26">November 26, 2026</time></p>
+		
+	</header>
+	<p>Paperback's desktop app is getting read aloud in 1.2, and with it, support for SAPI 5 voices. One of the first people to try it uses Mikropuhe, a Finnish voice, and every ä and ö came out garbled.</p>
+<p>The fix ended up being one line in a build helper, but finding it took a few wrong guesses, from both of us.</p>
+<h2>The wrong guesses</h2>
+<p>The first suggestion was to send the voice text in the ANSI code page instead of UTF-8, as a setting. That can't work, because SAPI 5 doesn't take text in any code page. <code>ISpVoice::Speak</code> takes UTF-16, and there's no other version of the call. Besides, ä and ö are both in Windows-1252.</p>
+<p>Next, a speech plugin for Notepad++ read the same text through the same voice perfectly. My guess was that the plugin was using the 32-bit version of Mikropuhe and Paperback the 64-bit one, but the plugin was 64-bit too.</p>
+<p>Then there was a theory that Paperback was sending the text as SAPI's XML markup, and Mikropuhe was choking on that. Paperback only does that when you change the pitch, though, since SAPI 5 can only change pitch with markup, and this happened even at the default pitch.</p>
+<h2>The log</h2>
+<p>Mikropuhe can write a log of the text it gets, and at first, the log looked fine.</p>
+<p>Then someone on a mailing list suggested opening the log in Notepad with the encoding set to ANSI. Now the log from Notepad++ still looked right, but the one from Paperback said this:</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">&lt;mikropuhe svt=&quot;4&quot;/&gt;&lt;mpcallback mark=&quot;0&quot;/&gt;Ã¤ Ã¶
+</span></code></pre>
+<p>That's a classic. In UTF-8, ä is the two bytes <code>C3 A4</code>. Read those as Windows-1252, and you get two characters instead: <code>Ã</code> and <code>¤</code>. ö is <code>C3 B6</code>, which becomes <code>Ã¶</code>. So Mikropuhe was writing UTF-8 bytes to its log, and the editors we'd been checking it in were helpfully detecting that and showing the right letters, which hid the whole bug.</p>
+<p>But Paperback hands SAPI proper UTF-16. Where were the UTF-8 bytes coming from?</p>
+<h2>The code page</h2>
+<p>A SAPI 5 voice is a DLL that gets loaded into your app's process. So when Mikropuhe converts the text it's given into an 8-bit encoding, it uses the ANSI code page of the process it's running in. Normally that's whatever your system uses, like Windows-1252 for Finnish. But since Windows 10 version 1903, an app can ask for UTF-8 as its code page instead, with one line in its manifest:</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">&lt;</span><span style="color:#bf616a;">activeCodePage </span><span style="color:#d08770;">xmlns</span><span style="color:#c0c5ce;">=&quot;</span><span style="color:#a3be8c;">http://schemas.microsoft.com/SMI/2019/WindowsSettings</span><span style="color:#c0c5ce;">&quot;&gt;UTF-8&lt;/</span><span style="color:#bf616a;">activeCodePage</span><span style="color:#c0c5ce;">&gt;
+</span></code></pre>
+<p>Paperback's manifest had that line. It comes from shipfitter, the crate that builds and packages all my Rust desktop apps, and the <a href="https://crates.io/crates/embed-manifest">embed-manifest</a> crate it uses asks for UTF-8 by default. That makes sense for an app's own code, but the code page belongs to the whole process, including every DLL loaded into it. So Mikropuhe got proper UTF-16 from SAPI, converted it to what it thought was Windows-1252, and got UTF-8 instead.</p>
+<p>The Notepad++ plugin worked because Notepad++ doesn't ask for UTF-8, so Mikropuhe got the system's code page there.</p>
+<h2>The fix</h2>
+<p>shipfitter 0.2.6 keeps the system's code page by default, and an app that really wants UTF-8 has to ask for it:</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#b48ead;">let</span><span style="color:#c0c5ce;"> code_page = </span><span style="color:#b48ead;">if</span><span style="color:#c0c5ce;"> options.utf8_code_page { ActiveCodePage::Utf8 } </span><span style="color:#b48ead;">else </span><span style="color:#c0c5ce;">{ ActiveCodePage::System };
+</span></code></pre>
+<p>It has to name the system code page, since leaving it out gets you embed-manifest's UTF-8 default. Once I had Mikropuhe installed to test, it logged and said "Hyvää päivää" correctly. Thanks to the user who reported this and stuck with it through all the wrong guesses.</p>
+<p>If you've got a Windows app that loads other people's DLLs, like speech voices or plugins, think twice before turning on the UTF-8 code page. Your code might be ready for it, but theirs probably isn't.</p>
+
+</article>
+	</main>
+	<footer class="site-footer">
+		<div class="wrap">
+			<ul>
+				<li><a href="/rss.xml">RSS feed</a></li>
+				<li><a href="https://github.com/trypsynth/quin.fyi">Source code</a></li>
+			</ul>
+			<p>Posts are licensed CC BY 4.0. The site's code is MIT licensed.</p>
+		</div>
+	</footer>
+</body>
+</html>
+
